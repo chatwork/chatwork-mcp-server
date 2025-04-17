@@ -1,6 +1,6 @@
 {
   "name": "@chatwork/mcp-server",
-  "version": "0.0.2",
+  "version": "0.0.3",
   "bin": "dist/index.js",
   "files": [
     "dist"
