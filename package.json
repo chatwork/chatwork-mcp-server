@@ -34,7 +34,7 @@
     "@eslint/js": "^9.23.0",
     "@tsconfig/strictest": "^2.0.5",
     "@types/node": "^22.13.14",
-    "dotenv": "^16.4.7",
+    "dotenv": "^17.2.0",
     "esbuild": "^0.25.1",
     "eslint": "^9.23.0",
     "eslint-config-prettier": "^10.1.1",
