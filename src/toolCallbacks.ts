@@ -1,6 +1,7 @@
 import { CallToolResult } from '@modelcontextprotocol/sdk/types.js';
 import { chatworkClient, ChatworkClientResponse } from './chatworkClient';
-import { Cache, Room } from './cache';
+import { store, setRooms, selectPaginatedRooms } from './store';
+import { validateRoomsArray } from './types/room';
 import {
   acceptIncomingRequestParamsSchema,
   createRoomLinkParamsSchema,
@@ -111,16 +112,16 @@ export const listContacts = () =>
     })
     .then(chatworkClientResponseToCallToolResult);
 
-const roomsCache = new Cache<Room[]>();
 export const listRooms = async (args: z.infer<typeof listRoomsParamsSchema>): Promise<CallToolResult> => {
   const { offset = 0, limit = 100 } = args;
 
-  const CACHE_KEY = 'all_rooms';
   const CACHE_TTL = 5 * 60 * 1000; // 5分
 
-  let allRooms = roomsCache.get(CACHE_KEY);
+  // Check if we have cached rooms
+  let paginatedRooms = selectPaginatedRooms(store.getState(), offset, limit);
 
-  if (!allRooms) {
+  if (!paginatedRooms) {
+    // Cache miss or expired - fetch from API
     const response = await chatworkClient().request({
       path: '/rooms',
       method: 'GET',
@@ -132,11 +133,14 @@ export const listRooms = async (args: z.infer<typeof listRoomsParamsSchema>): Pr
       return chatworkClientResponseToCallToolResult(response);
     }
 
-    allRooms = JSON.parse(response.response) as Room[];
-    roomsCache.set(CACHE_KEY, allRooms, CACHE_TTL);
+    const allRooms = validateRoomsArray(JSON.parse(response.response));
+    
+    // Store in Redux with TTL
+    store.dispatch(setRooms({ data: allRooms, ttl: CACHE_TTL }));
+    
+    // Get paginated data from updated store
+    paginatedRooms = selectPaginatedRooms(store.getState(), offset, limit) || [];
   }
-
-  const paginatedRooms = allRooms.slice(offset, offset + limit);
 
   const paginatedResponse: ChatworkClientResponse = {
     ok: true,
@@ -145,9 +149,7 @@ export const listRooms = async (args: z.infer<typeof listRoomsParamsSchema>): Pr
     uri: '/rooms',
   };
 
-  return chatworkClientResponseToCallToolResult(
-    paginatedResponse
-  );
+  return chatworkClientResponseToCallToolResult(paginatedResponse);
 };
 
 export const createRoom = (req: z.infer<typeof createRoomParamsSchema>) =>
