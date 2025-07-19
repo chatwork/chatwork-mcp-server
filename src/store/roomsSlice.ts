@@ -45,25 +45,25 @@ export const { setRooms, clearRooms, cleanExpiredData } = roomsSlice.actions;
 // Selectors
 export const selectRooms = (state: { rooms: RoomsState }): Room[] | null => {
   if (!state.rooms.rooms) return null;
-  
+
   const now = Date.now();
   const cachedData = state.rooms.rooms;
-  
+
   if (now - cachedData.timestamp > cachedData.ttl) {
     return null;
   }
-  
+
   return cachedData.data;
 };
 
 export const selectPaginatedRooms = (
   state: { rooms: RoomsState },
   offset: number = 0,
-  limit: number = 100
+  limit: number = 100,
 ): Room[] | null => {
   const rooms = selectRooms(state);
   if (!rooms) return null;
-  
+
   return rooms.slice(offset, offset + limit);
 };
 

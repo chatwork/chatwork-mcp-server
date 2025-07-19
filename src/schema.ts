@@ -3,19 +3,8 @@ import { z } from 'zod';
 /** @see https://developer.chatwork.com/reference/get-rooms */
 export const listRoomsParamsSchema = z
   .object({
-      offset: z
-        .number()
-        .int()
-        .min(0)
-        .default(0)
-        .describe('取得開始位置'),
-      limit: z
-        .number()
-        .int()
-        .min(1)
-        .max(100)
-        .default(100)
-        .describe('取得件数'),
+    offset: z.number().int().min(0).default(0).describe('取得開始位置'),
+    limit: z.number().int().min(1).max(100).default(100).describe('取得件数'),
   })
   .describe('チャット一覧取得');
 

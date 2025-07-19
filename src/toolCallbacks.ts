@@ -112,7 +112,9 @@ export const listContacts = () =>
     })
     .then(chatworkClientResponseToCallToolResult);
 
-export const listRooms = async (args: z.infer<typeof listRoomsParamsSchema>): Promise<CallToolResult> => {
+export const listRooms = async (
+  args: z.infer<typeof listRoomsParamsSchema>,
+): Promise<CallToolResult> => {
   const { offset = 0, limit = 100 } = args;
 
   const CACHE_TTL = 5 * 60 * 1000; // 5分
@@ -134,12 +136,13 @@ export const listRooms = async (args: z.infer<typeof listRoomsParamsSchema>): Pr
     }
 
     const allRooms = validateRoomsArray(JSON.parse(response.response));
-    
+
     // Store in Redux with TTL
     store.dispatch(setRooms({ data: allRooms, ttl: CACHE_TTL }));
-    
+
     // Get paginated data from updated store
-    paginatedRooms = selectPaginatedRooms(store.getState(), offset, limit) || [];
+    paginatedRooms =
+      selectPaginatedRooms(store.getState(), offset, limit) || [];
   }
 
   const paginatedResponse: ChatworkClientResponse = {

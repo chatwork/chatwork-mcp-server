@@ -134,7 +134,7 @@ describe('roomsSlice', () => {
     it('should handle cleanExpiredData - removes expired data', () => {
       const ttl = 300000; // 5 minutes
       const pastTime = Date.now() - ttl - 1000; // 1 second after expiry
-      
+
       const initialState = {
         rooms: {
           data: mockRooms,
@@ -151,7 +151,7 @@ describe('roomsSlice', () => {
     it('should handle cleanExpiredData - keeps valid data', () => {
       const ttl = 300000; // 5 minutes
       const recentTime = Date.now() - 60000; // 1 minute ago
-      
+
       const initialState = {
         rooms: {
           data: mockRooms,
@@ -187,7 +187,7 @@ describe('roomsSlice', () => {
       it('should return rooms data when not expired', () => {
         const ttl = 300000; // 5 minutes
         const recentTime = Date.now() - 60000; // 1 minute ago
-        
+
         const state = {
           rooms: {
             rooms: {
@@ -206,7 +206,7 @@ describe('roomsSlice', () => {
       it('should return null when data is expired', () => {
         const ttl = 300000; // 5 minutes
         const pastTime = Date.now() - ttl - 1000; // 1 second after expiry
-        
+
         const state = {
           rooms: {
             rooms: {

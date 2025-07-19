@@ -11,7 +11,7 @@ export const store = configureStore({
       serializableCheck: {
         ignoredPaths: ['rooms.rooms.timestamp'],
       },
-    })
+    }),
 });
 
 export type RootState = ReturnType<typeof store.getState>;
