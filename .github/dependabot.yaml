@@ -13,3 +13,7 @@ updates:
     labels:
       - 'dependencies'
       - 'dependabot'
+  - package-ecosystem: 'devcontainers'
+    directory: '/'
+    schedule:
+      interval: weekly

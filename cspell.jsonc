@@ -1,0 +1,13 @@
+{
+  "words": [
+    // Domain-specific terms
+    "chatwork",
+    "kubell",
+    "modelcontextprotocol",
+
+    // Development tools
+    "devcontainers",
+    "dbaeumer", // Author name of eslint extension
+    "esbenp", // Author name of prettier extension
+  ],
+}
