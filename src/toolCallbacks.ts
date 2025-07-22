@@ -1,5 +1,7 @@
 import { CallToolResult } from '@modelcontextprotocol/sdk/types.js';
 import { chatworkClient, ChatworkClientResponse } from './chatworkClient';
+import { store, setRooms, selectPaginatedRooms } from './store';
+import { validateRoomsArray } from './types/room';
 import {
   acceptIncomingRequestParamsSchema,
   createRoomLinkParamsSchema,
@@ -17,6 +19,7 @@ import {
   listRoomFilesParamsSchema,
   listRoomMembersParamsSchema,
   listRoomMessagesParamsSchema,
+  listRoomsParamsSchema,
   listRoomTasksParamsSchema,
   postRoomMessageParamsSchema,
   readRoomMessagesParamsSchema,
@@ -109,41 +112,48 @@ export const listContacts = () =>
     })
     .then(chatworkClientResponseToCallToolResult);
 
-// TODO: 2500文字という閾値は直感によるもの。適切な値を調査する必要がある。
-/** レスポンス文字列が2500文字を超える場合プロパティを絞って返す */
-const minifyListRoomsResponse = (
-  res: ChatworkClientResponse,
-): ChatworkClientResponse => {
-  if (!res.ok || res.response.length < 2500) {
-    return res;
-  }
+export const listRooms = async (
+  args: z.infer<typeof listRoomsParamsSchema>,
+): Promise<CallToolResult> => {
+  const { offset = 0, limit = 100 } = args;
 
-  const fullResponse: {
-    room_id: number;
-    name: string;
-    type: string;
-  }[] = JSON.parse(res.response);
-  const minifiedResponse = fullResponse.map(({ room_id, name, type }) => ({
-    room_id,
-    name,
-    type,
-  }));
-  return {
-    ...res,
-    response: JSON.stringify(minifiedResponse),
-  };
-};
+  const CACHE_TTL = 5 * 60 * 1000; // 5分
 
-export const listRooms = () =>
-  chatworkClient()
-    .request({
+  // Check if we have cached rooms
+  let paginatedRooms = selectPaginatedRooms(store.getState(), offset, limit);
+
+  if (!paginatedRooms) {
+    // Cache miss or expired - fetch from API
+    const response = await chatworkClient().request({
       path: '/rooms',
       method: 'GET',
       query: {},
       body: {},
-    })
-    .then(minifyListRoomsResponse)
-    .then(chatworkClientResponseToCallToolResult);
+    });
+
+    if (!response.ok) {
+      return chatworkClientResponseToCallToolResult(response);
+    }
+
+    const allRooms = validateRoomsArray(JSON.parse(response.response));
+
+    // Store in Redux with TTL
+    store.dispatch(setRooms({ data: allRooms, ttl: CACHE_TTL }));
+
+    // Get paginated data from updated store
+    paginatedRooms =
+      selectPaginatedRooms(store.getState(), offset, limit) || [];
+  }
+
+  const paginatedResponse: ChatworkClientResponse = {
+    ok: true,
+    status: 200,
+    response: JSON.stringify(paginatedRooms),
+    uri: '/rooms',
+  };
+
+  return chatworkClientResponseToCallToolResult(paginatedResponse);
+};
 
 export const createRoom = (req: z.infer<typeof createRoomParamsSchema>) =>
   chatworkClient()
