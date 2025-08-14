@@ -16,6 +16,7 @@ import {
   listRoomFilesParamsSchema,
   listRoomMembersParamsSchema,
   listRoomMessagesParamsSchema,
+  listRoomsParamsSchema,
   listRoomTasksParamsSchema,
   postRoomMessageParamsSchema,
   readRoomMessagesParamsSchema,
@@ -84,7 +85,14 @@ server.tool(
   '自分のコンタクト一覧を取得します。',
   listContacts,
 );
-server.tool('list_rooms', 'チャット一覧を取得します。', listRooms);
+server.registerTool(
+  'list_rooms',
+  {
+    description: 'チャット一覧を取得します。',
+    inputSchema: listRoomsParamsSchema.shape,
+  },
+  listRooms,
+);
 server.tool(
   'create_room',
   '新しいグループチャットを作成します。',
