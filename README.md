@@ -1,5 +1,7 @@
 # Chatwork MCP Server
 
+[![npm](https://img.shields.io/npm/v/@chatwork/mcp-server)](https://www.npmjs.com/package/@chatwork/mcp-server)
+
 Chatwork を AI から操作するための MCP (Model Context Protocol) サーバーです。
 
 ## 使い方
