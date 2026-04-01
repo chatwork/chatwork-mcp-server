@@ -1,0 +1,3 @@
+[mcp_servers.chatwork]
+command = "docker"
+args = ["run", "--rm", "-i", "--env-file", ".env", "chatwork-mcp-server"]
