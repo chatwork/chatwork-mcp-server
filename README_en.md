@@ -1,7 +1,5 @@
 # Chatwork MCP Server
 
-For the Japanese version of this guide, see [README.md](README.md).
-
 Chatwork MCP (Model Context Protocol) server for operating Chatwork from AI tools.
 
 ## Usage

@@ -2,6 +2,8 @@
 
 Chatwork を AI から操作するための MCP (Model Context Protocol) サーバーです。
 
+英語版は [README_en.md](README_en.md) を参照してください。
+
 ## 使い方
 
 Claude Desktop を例に説明します。
