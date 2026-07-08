@@ -1,3 +1,5 @@
+[![MseeP.ai Security Assessment Badge](https://mseep.net/pr/chatwork-chatwork-mcp-server-badge.png)](https://mseep.ai/app/chatwork-chatwork-mcp-server)
+
 # Chatwork MCP Server
 
 [![npm](https://img.shields.io/npm/v/@chatwork/mcp-server)](https://www.npmjs.com/package/@chatwork/mcp-server)
