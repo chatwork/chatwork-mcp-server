@@ -42,7 +42,7 @@
     "prettier": "^3.5.3",
     "typescript": "^5.8.2",
     "typescript-eslint": "^8.28.0",
-    "vitest": "^3.0.9"
+    "vitest": "^4.1.5"
   },
   "dependencies": {
     "@modelcontextprotocol/sdk": "^1.8.0",
