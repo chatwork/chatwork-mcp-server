@@ -11,7 +11,8 @@
     "type-check": "tsc",
     "test": "vitest run",
     "build": "esbuild src/index.ts --minify --bundle --platform=node --format=esm --outfile=dist/index.js",
-    "dev": "npm run build -- --watch"
+    "dev": "npm run build -- --watch",
+    "docker:build": "docker build -t chatwork-mcp-server ."
   },
   "repository": {
     "type": "git",
