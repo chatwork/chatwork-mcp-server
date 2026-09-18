@@ -17,5 +17,19 @@ export default defineConfig({
   },
   test: {
     env: dotenv.config({ path: '.env.test' }).parsed ?? {},
+    coverage: {
+      provider: 'v8',
+      // 計測対象は src のみ。smoke テストが起動する dist/index.js は
+      // 子プロセスかつ minify 済みバンドルなので計測しない
+      include: ['src/**/*.ts'],
+      reporter: ['text', 'html', 'lcov'],
+      // 実績の少し下に置き、下回ったら exit code 1 にする
+      thresholds: {
+        statements: 80,
+        branches: 40,
+        functions: 80,
+        lines: 80,
+      },
+    },
   },
 });
