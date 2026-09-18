@@ -10,8 +10,10 @@
     "lint": "eslint && prettier --check .",
     "type-check": "tsc",
     "test": "vitest run",
-    "build": "esbuild src/index.ts --minify --bundle --platform=node --format=esm --outfile=dist/index.js",
-    "dev": "npm run build -- --watch"
+    "build": "node esbuild.config.mjs",
+    "dev": "node esbuild.config.mjs --watch",
+    "start:http": "node dist/index.js --transport http",
+    "inspect": "npx -y @modelcontextprotocol/inspector --config ./inspector.json"
   },
   "repository": {
     "type": "git",
@@ -45,7 +47,7 @@
     "vitest": "^4.1.5"
   },
   "dependencies": {
-    "@modelcontextprotocol/sdk": "^1.8.0",
-    "zod": "^3.24.2"
+    "@modelcontextprotocol/sdk": "^1.30.0",
+    "zod": "^4.6.5"
   }
 }

@@ -1,0 +1,11 @@
+{
+  "mcpServers": {
+    "chatwork-http": {
+      "type": "http",
+      "url": "http://127.0.0.1:3000/mcp",
+      "headers": {
+        "Authorization": "Bearer YOUR_CHATWORK_API_TOKEN"
+      }
+    }
+  }
+}

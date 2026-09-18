@@ -1,3 +1,14 @@
+import { AsyncLocalStorage } from 'node:async_hooks';
+
+/**
+ * リクエストスコープの Chatwork API トークン。
+ *
+ * stdio では 1 プロセス = 1 利用者なので環境変数で足りるが、Streamable HTTP では
+ * 1 プロセスを複数の利用者が共有するため、トークンはリクエストごとに切り替える必要がある。
+ * `toolCallbacks.ts` の全コールバックにトークンを引き回す代わりに、ここで文脈として持つ。
+ */
+export const chatworkApiTokenStorage = new AsyncLocalStorage<string>();
+
 interface ChatworkClientRequest {
   path: string;
   method: 'GET' | 'POST' | 'PUT' | 'DELETE';
@@ -67,7 +78,8 @@ export class ChatworkClient {
 }
 
 export function chatworkClient() {
-  const chatworkApiToken = process.env['CHATWORK_API_TOKEN'];
+  const chatworkApiToken =
+    chatworkApiTokenStorage.getStore() ?? process.env['CHATWORK_API_TOKEN'];
   if (!chatworkApiToken) {
     throw new Error('CHATWORK_API_TOKEN is not set');
   }
