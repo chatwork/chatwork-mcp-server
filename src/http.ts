@@ -106,6 +106,9 @@ export async function startHttpServer({
     if (!validateHost(req, res)) {
       return;
     }
+    // validateHost はホスト名を小文字化して照合するが、transport が内部で使う
+    // Host 検査はケースセンシティブ。揃えておかないと本文なしの 400 になる
+    req.headers.host = req.headers.host?.toLowerCase();
     handle(req, res).catch((error: unknown) => {
       console.error(
         '[chatwork-mcp-server] リクエスト処理に失敗しました:',
