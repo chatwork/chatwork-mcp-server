@@ -59,6 +59,12 @@ describe.skipIf(skipWithoutDist)('dist/index.js', () => {
         expect(names).toContain('get_me');
         expect(names).toContain('list_rooms');
         expect(names).toContain('post_room_message');
+
+        // title はクライアントの承認 UI に出るので、付け忘れたツールがあれば名前で分かるようにする
+        const withoutTitle = tools
+          .filter((tool) => !tool.title)
+          .map((tool) => tool.name);
+        expect(withoutTitle).toEqual([]);
       } finally {
         await client.close();
       }

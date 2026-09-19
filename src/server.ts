@@ -70,6 +70,7 @@ export function createServer() {
   server.registerTool(
     'get_me',
     {
+      title: '自分の情報取得',
       description: '自分自身の情報を取得します。',
       annotations: { readOnlyHint: true, openWorldHint: true },
     },
@@ -78,6 +79,7 @@ export function createServer() {
   server.registerTool(
     'get_my_status',
     {
+      title: '自分のステータス取得',
       description:
         '自分の未読数、自分宛ての未読の数、未完了タスク数を取得します。',
       annotations: { readOnlyHint: true, openWorldHint: true },
@@ -87,6 +89,7 @@ export function createServer() {
   server.registerTool(
     'list_my_tasks',
     {
+      title: '自分のタスク一覧取得',
       description: '自分のタスク一覧を最大100件まで取得します。',
       inputSchema: listMyTasksParamsSchema,
       annotations: { readOnlyHint: true, openWorldHint: true },
@@ -96,6 +99,7 @@ export function createServer() {
   server.registerTool(
     'list_contacts',
     {
+      title: 'コンタクト一覧取得',
       description: '自分のコンタクト一覧を取得します。',
       annotations: { readOnlyHint: true, openWorldHint: true },
     },
@@ -104,6 +108,7 @@ export function createServer() {
   server.registerTool(
     'list_rooms',
     {
+      title: 'チャット一覧取得',
       description: 'チャット一覧を取得します。',
       annotations: { readOnlyHint: true, openWorldHint: true },
     },
@@ -112,6 +117,7 @@ export function createServer() {
   server.registerTool(
     'create_room',
     {
+      title: '新規グループチャット作成',
       description: '新しいグループチャットを作成します。',
       inputSchema: createRoomParamsSchema,
       annotations: {
@@ -125,6 +131,7 @@ export function createServer() {
   server.registerTool(
     'get_room',
     {
+      title: 'チャット情報取得',
       description: 'チャットの情報（名前、アイコン、種類など）を取得します。',
       inputSchema: getRoomParamsSchema,
       annotations: { readOnlyHint: true, openWorldHint: true },
@@ -134,6 +141,7 @@ export function createServer() {
   server.registerTool(
     'update_room',
     {
+      title: 'チャット情報更新',
       description: 'チャットの情報（名前、アイコンなど）を変更します。',
       inputSchema: updateRoomParamsSchema,
       annotations: {
@@ -147,6 +155,7 @@ export function createServer() {
   server.registerTool(
     'delete_or_leave_room',
     {
+      title: 'グループチャット退席/削除',
       description:
         'グループチャットを退席、または削除します。グループチャットを退席すると、このグループチャットにある自分が担当者のタスク、および自分が送信したファイルがすべて削除されます。グループチャットを削除すると、このグループチャットにあるメッセージ、タスク、ファイルがすべて削除されます。（一度削除すると元に戻せません。）',
       inputSchema: deleteOrLeaveRoomParamsSchema,
@@ -161,6 +170,7 @@ export function createServer() {
   server.registerTool(
     'list_room_members',
     {
+      title: 'チャットメンバー一覧取得',
       description: 'チャットのメンバー一覧を取得します。',
       inputSchema: listRoomMembersParamsSchema,
       annotations: { readOnlyHint: true, openWorldHint: true },
@@ -170,6 +180,7 @@ export function createServer() {
   server.registerTool(
     'update_room_members',
     {
+      title: 'チャットメンバー一括変更',
       description: 'チャットのメンバーを一括で変更します。',
       inputSchema: updateRoomMembersParamsSchema,
       annotations: {
@@ -183,6 +194,7 @@ export function createServer() {
   server.registerTool(
     'list_room_messages',
     {
+      title: 'チャットメッセージ一覧取得',
       description: 'チャットのメッセージ一覧を最大100件まで取得します。',
       inputSchema: listRoomMessagesParamsSchema,
       annotations: {
@@ -196,6 +208,7 @@ export function createServer() {
   server.registerTool(
     'post_room_message',
     {
+      title: 'チャットメッセージ投稿',
       description: 'チャットに新しいメッセージを投稿します。',
       inputSchema: postRoomMessageParamsSchema,
       annotations: {
@@ -209,6 +222,7 @@ export function createServer() {
   server.registerTool(
     'read_room_messages',
     {
+      title: 'チャットメッセージ既読化',
       description: 'チャットのメッセージを既読にします。',
       inputSchema: readRoomMessagesParamsSchema,
       annotations: {
@@ -222,6 +236,7 @@ export function createServer() {
   server.registerTool(
     'unread_room_message',
     {
+      title: 'チャットメッセージ未読化',
       description: 'チャットのメッセージを未読にします。',
       inputSchema: unreadRoomMessageParamsSchema,
       annotations: {
@@ -235,6 +250,7 @@ export function createServer() {
   server.registerTool(
     'get_room_message',
     {
+      title: 'チャットメッセージ取得',
       description: 'チャットのメッセージを取得します。',
       inputSchema: getRoomMessageParamsSchema,
       annotations: { readOnlyHint: true, openWorldHint: true },
@@ -244,6 +260,7 @@ export function createServer() {
   server.registerTool(
     'update_room_message',
     {
+      title: 'チャットメッセージ更新',
       description: 'チャットのメッセージを更新します。',
       inputSchema: updateRoomMessageParamsSchema,
       annotations: {
@@ -257,6 +274,7 @@ export function createServer() {
   server.registerTool(
     'delete_room_message',
     {
+      title: 'チャットメッセージ削除',
       description: 'チャットのメッセージを削除します。',
       inputSchema: deleteRoomMessageParamsSchema,
       annotations: {
@@ -270,6 +288,7 @@ export function createServer() {
   server.registerTool(
     'list_room_tasks',
     {
+      title: 'チャットタスク一覧取得',
       description: 'チャットのタスク一覧を最大100件まで取得します。',
       inputSchema: listRoomTasksParamsSchema,
       annotations: { readOnlyHint: true, openWorldHint: true },
@@ -279,6 +298,7 @@ export function createServer() {
   server.registerTool(
     'create_room_task',
     {
+      title: 'チャットタスク作成',
       description: 'チャットに新しいタスクを追加します。',
       inputSchema: createRoomTaskParamsSchema,
       annotations: {
@@ -292,6 +312,7 @@ export function createServer() {
   server.registerTool(
     'get_room_task',
     {
+      title: 'チャットタスク情報取得',
       description: 'チャットのタスクの情報を取得します。',
       inputSchema: getRoomTaskParamsSchema,
       annotations: { readOnlyHint: true, openWorldHint: true },
@@ -301,6 +322,7 @@ export function createServer() {
   server.registerTool(
     'update_room_task_status',
     {
+      title: 'チャットタスクステータス更新',
       description: 'チャットのタスクの完了状態を変更します。',
       inputSchema: updateRoomTasksStatusParamsSchema,
       annotations: {
@@ -314,6 +336,7 @@ export function createServer() {
   server.registerTool(
     'list_room_files',
     {
+      title: 'チャットファイル一覧取得',
       description: 'チャットのファイル一覧を最大100件まで取得します。',
       inputSchema: listRoomFilesParamsSchema,
       annotations: { readOnlyHint: true, openWorldHint: true },
@@ -323,6 +346,7 @@ export function createServer() {
   server.registerTool(
     'get_room_file',
     {
+      title: 'チャットファイル情報取得',
       description: 'チャットのファイルの情報を取得します。',
       inputSchema: getRoomFileParamsSchema,
       annotations: {
@@ -336,6 +360,7 @@ export function createServer() {
   server.registerTool(
     'get_room_link',
     {
+      title: 'チャット招待リンク取得',
       description: 'チャットへの招待リンクを取得します。',
       inputSchema: getRoomLinkParamsSchema,
       annotations: { readOnlyHint: true, openWorldHint: true },
@@ -345,6 +370,7 @@ export function createServer() {
   server.registerTool(
     'create_room_link',
     {
+      title: 'チャット招待リンク作成',
       description:
         'チャットへの招待リンクを作成します。すでに招待リンクが作成されている場合は400エラーを返します。',
       inputSchema: createRoomLinkParamsSchema,
@@ -359,6 +385,7 @@ export function createServer() {
   server.registerTool(
     'update_room_link',
     {
+      title: 'チャット招待リンク更新',
       description:
         'チャットへの招待リンクを変更します。招待リンクが無効になっている場合は400エラーを返します。',
       inputSchema: updateRoomLinkParamsSchema,
@@ -373,6 +400,7 @@ export function createServer() {
   server.registerTool(
     'delete_room_link',
     {
+      title: 'チャット招待リンク削除',
       description:
         'チャットへの招待リンクを削除します。招待リンクが無効になっている場合は400エラーを返します。',
       inputSchema: deleteRoomLinkParamsSchema,
@@ -387,6 +415,7 @@ export function createServer() {
   server.registerTool(
     'list_incoming_requests',
     {
+      title: 'コンタクト承認依頼一覧取得',
       description: '自分へのコンタクト承認依頼一覧を最大100件まで取得します。',
       annotations: { readOnlyHint: true, openWorldHint: true },
     },
@@ -395,6 +424,7 @@ export function createServer() {
   server.registerTool(
     'accept_incoming_request',
     {
+      title: 'コンタクト承認依頼承認',
       description: '自分へのコンタクト承認依頼を承認します。',
       inputSchema: acceptIncomingRequestParamsSchema,
       annotations: {
@@ -408,6 +438,7 @@ export function createServer() {
   server.registerTool(
     'reject_incoming_request',
     {
+      title: 'コンタクト承認依頼拒否',
       description: '自分へのコンタクト承認依頼を拒否します。',
       inputSchema: rejectIncomingRequestParamsSchema,
       annotations: {
