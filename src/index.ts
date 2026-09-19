@@ -14,13 +14,44 @@ const parsePort = (raw: string): number => {
   return port;
 };
 
-/** カンマ区切りの `Host` 許可リスト。空なら undefined（= ループバックのみ） */
+/** `localhost:3000` → `localhost`。角括弧付きの IPv6 と裸の IPv6 はそのまま返す */
+const stripPort = (host: string): string => {
+  if (host.startsWith('[')) {
+    const bracket = host.indexOf(']');
+    return bracket === -1 ? host : host.slice(0, bracket + 1);
+  }
+  // 角括弧なしで `:` が複数あるものは IPv6 アドレスであってポート付きではない
+  if (host.indexOf(':') !== host.lastIndexOf(':')) {
+    return host;
+  }
+  return host.split(':')[0] ?? host;
+};
+
+/**
+ * カンマ区切りの `Host` 許可リスト。空なら undefined（= ループバックのみ）。
+ *
+ * 照合はホスト名のみで行われるため、ポート番号が付いていれば落として受け取る。
+ */
 const parseAllowedHosts = (raw: string | undefined): string[] | undefined => {
   const hosts = (raw ?? '')
     .split(',')
     .map((host) => host.trim())
     .filter((host) => host !== '');
-  return hosts.length > 0 ? hosts : undefined;
+  if (hosts.length === 0) {
+    return undefined;
+  }
+
+  const stripped = hosts.filter((host) => stripPort(host) !== host);
+  if (stripped.length > 0) {
+    console.error(
+      '[chatwork-mcp-server] --allowed-hosts のポート番号は無視されます:',
+    );
+    for (const host of stripped) {
+      console.error(`  ${host} → ${stripPort(host)}`);
+    }
+  }
+
+  return hosts.map(stripPort);
 };
 
 async function main() {
