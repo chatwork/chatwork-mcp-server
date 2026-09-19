@@ -13,7 +13,7 @@ import { createServer } from './server';
 
 const MCP_PATH = '/mcp';
 
-/** DNS リバインディング保護の既定値。ループバックのみを許可する */
+/** DNS リバインディング保護の既定値。照合するのは送信元ではなく `Host` ヘッダの名前 */
 const DEFAULT_ALLOWED_HOSTS = ['localhost', '127.0.0.1', '[::1]'];
 
 /** `Authorization: Bearer <token>` からトークンを取り出す。無い・空なら undefined */
