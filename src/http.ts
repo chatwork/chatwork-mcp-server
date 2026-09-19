@@ -4,8 +4,8 @@ import {
   type Server,
   type ServerResponse,
 } from 'node:http';
-import { StreamableHTTPServerTransport } from '@modelcontextprotocol/sdk/server/streamableHttp.js';
-import type { Transport } from '@modelcontextprotocol/sdk/shared/transport.js';
+import type { Transport } from '@modelcontextprotocol/server';
+import { NodeStreamableHTTPServerTransport } from '@modelcontextprotocol/node';
 import { chatworkApiTokenStorage } from './chatworkClient';
 import { createServer } from './server';
 
@@ -77,7 +77,7 @@ export async function startHttpServer({
     }
 
     const server = createServer();
-    const transport = new StreamableHTTPServerTransport({
+    const transport = new NodeStreamableHTTPServerTransport({
       // sessionIdGenerator は渡さない = ステートレス運用の指定
       enableJsonResponse: true,
       // SDK の既定値は false なので明示的に有効化する
