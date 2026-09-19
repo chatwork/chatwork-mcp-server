@@ -137,7 +137,7 @@ export function createServer() {
       description: 'チャットの情報（名前、アイコンなど）を変更します。',
       inputSchema: updateRoomParamsSchema,
       annotations: {
-        destructiveHint: false,
+        destructiveHint: true,
         idempotentHint: true,
         openWorldHint: true,
       },
