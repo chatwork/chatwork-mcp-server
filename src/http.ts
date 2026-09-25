@@ -4,12 +4,17 @@ import {
   type Server,
   type ServerResponse,
 } from 'node:http';
-import { StreamableHTTPServerTransport } from '@modelcontextprotocol/sdk/server/streamableHttp.js';
-import type { Transport } from '@modelcontextprotocol/sdk/shared/transport.js';
+import {
+  hostHeaderValidation,
+  NodeStreamableHTTPServerTransport,
+} from '@modelcontextprotocol/node';
 import { chatworkApiTokenStorage } from './chatworkClient';
 import { createServer } from './server';
 
 const MCP_PATH = '/mcp';
+
+/** DNS リバインディング保護の既定値。照合するのは送信元ではなく `Host` ヘッダの名前 */
+const DEFAULT_ALLOWED_HOSTS = ['localhost', '127.0.0.1', '[::1]'];
 
 /** `Authorization: Bearer <token>` からトークンを取り出す。無い・空なら undefined */
 const bearerToken = (req: IncomingMessage): string | undefined => {
@@ -38,8 +43,8 @@ export interface HttpServerOptions {
   port: number;
   host: string;
   /**
-   * DNS リバインディング保護で許可する `Host` ヘッダの値。ポート番号を含めた完全一致。
-   * 省略時はループバック（`localhost:<port>` / `127.0.0.1:<port>`）のみを許可する。
+   * DNS リバインディング保護で許可する `Host` ヘッダのホスト名。ポート番号は含めない。
+   * 省略時はループバック（`localhost` / `127.0.0.1` / `[::1]`）のみを許可する。
    */
   allowedHosts?: string[];
 }
@@ -59,6 +64,9 @@ export async function startHttpServer({
   // port: 0 を渡された場合は listen 後に実際のポートで上書きする
   let boundPort = port;
 
+  const allowedHostNames = allowedHosts ?? DEFAULT_ALLOWED_HOSTS;
+  const validateHost = hostHeaderValidation(allowedHostNames);
+
   const handle = async (req: IncomingMessage, res: ServerResponse) => {
     if (new URL(req.url ?? '/', 'http://localhost').pathname !== MCP_PATH) {
       respondError(res, 404, -32601, `Not Found: use ${MCP_PATH}`);
@@ -77,16 +85,9 @@ export async function startHttpServer({
     }
 
     const server = createServer();
-    const transport = new StreamableHTTPServerTransport({
-      // sessionIdGenerator は渡さない = ステートレス運用の指定
+    const transport = new NodeStreamableHTTPServerTransport({
+      sessionIdGenerator: undefined, // ステートレス運用の指定
       enableJsonResponse: true,
-      // SDK の既定値は false なので明示的に有効化する
-      enableDnsRebindingProtection: true,
-      // Host ヘッダは完全一致で照合されるためポート込みで渡す必要がある
-      allowedHosts: allowedHosts ?? [
-        `localhost:${boundPort}`,
-        `127.0.0.1:${boundPort}`,
-      ],
     });
 
     res.on('close', () => {
@@ -94,15 +95,20 @@ export async function startHttpServer({
       void server.close();
     });
 
-    // onclose / onerror / onmessage が getter 宣言のため exactOptionalPropertyTypes
-    // 下では Transport に代入できない。実装は満たしているので型だけ合わせる
-    await server.connect(transport as Transport);
+    await server.connect(transport);
     await chatworkApiTokenStorage.run(token, () =>
       transport.handleRequest(req, res),
     );
   };
 
   const httpServer = createHttpServer((req, res) => {
+    // false のとき 403 は validateHost が既に返している
+    if (!validateHost(req, res)) {
+      return;
+    }
+    // validateHost はホスト名を小文字化して照合するが、transport が内部で使う
+    // Host 検査はケースセンシティブ。揃えておかないと本文なしの 400 になる
+    req.headers.host = req.headers.host?.toLowerCase();
     handle(req, res).catch((error: unknown) => {
       console.error(
         '[chatwork-mcp-server] リクエスト処理に失敗しました:',
@@ -133,9 +139,7 @@ export async function startHttpServer({
     `[chatwork-mcp-server] listening on http://${host}:${boundPort}${MCP_PATH}`,
   );
   console.error(
-    `[chatwork-mcp-server] allowed Host headers: ${(
-      allowedHosts ?? [`localhost:${boundPort}`, `127.0.0.1:${boundPort}`]
-    ).join(', ')}`,
+    `[chatwork-mcp-server] allowed Host names: ${allowedHostNames.join(', ')}`,
   );
 
   return httpServer;

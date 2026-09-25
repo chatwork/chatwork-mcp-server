@@ -1,10 +1,10 @@
 import { existsSync, readFileSync } from 'node:fs';
 import { fileURLToPath } from 'node:url';
-import { Client } from '@modelcontextprotocol/sdk/client/index.js';
 import {
   getDefaultEnvironment,
   StdioClientTransport,
-} from '@modelcontextprotocol/sdk/client/stdio.js';
+} from '@modelcontextprotocol/client/stdio';
+import { Client } from '@modelcontextprotocol/client';
 import { describe, expect, test } from 'vitest';
 
 /**

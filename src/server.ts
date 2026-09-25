@@ -1,4 +1,4 @@
-import { McpServer } from '@modelcontextprotocol/sdk/server/mcp.js';
+import { McpServer } from '@modelcontextprotocol/server';
 import {
   acceptIncomingRequestParamsSchema,
   createRoomLinkParamsSchema,
@@ -67,177 +67,355 @@ export function createServer() {
     version: __PACKAGE_VERSION__,
   });
 
-  server.tool('get_me', '自分自身の情報を取得します。', getMe);
-  server.tool(
+  server.registerTool(
+    'get_me',
+    {
+      description: '自分自身の情報を取得します。',
+      annotations: { readOnlyHint: true, openWorldHint: true },
+    },
+    getMe,
+  );
+  server.registerTool(
     'get_my_status',
-    '自分の未読数、自分宛ての未読の数、未完了タスク数を取得します。',
+    {
+      description:
+        '自分の未読数、自分宛ての未読の数、未完了タスク数を取得します。',
+      annotations: { readOnlyHint: true, openWorldHint: true },
+    },
     getMyStatus,
   );
-  server.tool(
+  server.registerTool(
     'list_my_tasks',
-    '自分のタスク一覧を最大100件まで取得します。',
-    listMyTasksParamsSchema.shape,
+    {
+      description: '自分のタスク一覧を最大100件まで取得します。',
+      inputSchema: listMyTasksParamsSchema,
+      annotations: { readOnlyHint: true, openWorldHint: true },
+    },
     listMyTasks,
   );
-  server.tool(
+  server.registerTool(
     'list_contacts',
-    '自分のコンタクト一覧を取得します。',
+    {
+      description: '自分のコンタクト一覧を取得します。',
+      annotations: { readOnlyHint: true, openWorldHint: true },
+    },
     listContacts,
   );
-  server.tool('list_rooms', 'チャット一覧を取得します。', listRooms);
-  server.tool(
+  server.registerTool(
+    'list_rooms',
+    {
+      description: 'チャット一覧を取得します。',
+      annotations: { readOnlyHint: true, openWorldHint: true },
+    },
+    listRooms,
+  );
+  server.registerTool(
     'create_room',
-    '新しいグループチャットを作成します。',
-    createRoomParamsSchema.shape,
+    {
+      description: '新しいグループチャットを作成します。',
+      inputSchema: createRoomParamsSchema,
+      annotations: {
+        destructiveHint: false,
+        idempotentHint: false,
+        openWorldHint: true,
+      },
+    },
     createRoom,
   );
-  server.tool(
+  server.registerTool(
     'get_room',
-    'チャットの情報（名前、アイコン、種類など）を取得します。',
-    getRoomParamsSchema.shape,
+    {
+      description: 'チャットの情報（名前、アイコン、種類など）を取得します。',
+      inputSchema: getRoomParamsSchema,
+      annotations: { readOnlyHint: true, openWorldHint: true },
+    },
     getRoom,
   );
-  server.tool(
+  server.registerTool(
     'update_room',
-    'チャットの情報（名前、アイコンなど）を変更します。',
-    updateRoomParamsSchema.shape,
+    {
+      description: 'チャットの情報（名前、アイコンなど）を変更します。',
+      inputSchema: updateRoomParamsSchema,
+      annotations: {
+        destructiveHint: true,
+        idempotentHint: true,
+        openWorldHint: true,
+      },
+    },
     updateRoom,
   );
-  server.tool(
+  server.registerTool(
     'delete_or_leave_room',
-    'グループチャットを退席、または削除します。グループチャットを退席すると、このグループチャットにある自分が担当者のタスク、および自分が送信したファイルがすべて削除されます。グループチャットを削除すると、このグループチャットにあるメッセージ、タスク、ファイルがすべて削除されます。（一度削除すると元に戻せません。）',
-    deleteOrLeaveRoomParamsSchema.shape,
+    {
+      description:
+        'グループチャットを退席、または削除します。グループチャットを退席すると、このグループチャットにある自分が担当者のタスク、および自分が送信したファイルがすべて削除されます。グループチャットを削除すると、このグループチャットにあるメッセージ、タスク、ファイルがすべて削除されます。（一度削除すると元に戻せません。）',
+      inputSchema: deleteOrLeaveRoomParamsSchema,
+      annotations: {
+        destructiveHint: true,
+        idempotentHint: true,
+        openWorldHint: true,
+      },
+    },
     deleteOrLeaveRoom,
   );
-  server.tool(
+  server.registerTool(
     'list_room_members',
-    'チャットのメンバー一覧を取得します。',
-    listRoomMembersParamsSchema.shape,
+    {
+      description: 'チャットのメンバー一覧を取得します。',
+      inputSchema: listRoomMembersParamsSchema,
+      annotations: { readOnlyHint: true, openWorldHint: true },
+    },
     listRoomMembers,
   );
-  server.tool(
+  server.registerTool(
     'update_room_members',
-    'チャットのメンバーを一括で変更します。',
-    updateRoomMembersParamsSchema.shape,
+    {
+      description: 'チャットのメンバーを一括で変更します。',
+      inputSchema: updateRoomMembersParamsSchema,
+      annotations: {
+        destructiveHint: true,
+        idempotentHint: true,
+        openWorldHint: true,
+      },
+    },
     updateRoomMembers,
   );
-  server.tool(
+  server.registerTool(
     'list_room_messages',
-    'チャットのメッセージ一覧を最大100件まで取得します。',
-    listRoomMessagesParamsSchema.shape,
+    {
+      description: 'チャットのメッセージ一覧を最大100件まで取得します。',
+      inputSchema: listRoomMessagesParamsSchema,
+      annotations: {
+        destructiveHint: false,
+        idempotentHint: false,
+        openWorldHint: true,
+      },
+    },
     listRoomMessages,
   );
-  server.tool(
+  server.registerTool(
     'post_room_message',
-    'チャットに新しいメッセージを投稿します。',
-    postRoomMessageParamsSchema.shape,
+    {
+      description: 'チャットに新しいメッセージを投稿します。',
+      inputSchema: postRoomMessageParamsSchema,
+      annotations: {
+        destructiveHint: false,
+        idempotentHint: false,
+        openWorldHint: true,
+      },
+    },
     postRoomMessage,
   );
-  server.tool(
+  server.registerTool(
     'read_room_messages',
-    'チャットのメッセージを既読にします。',
-    readRoomMessagesParamsSchema.shape,
+    {
+      description: 'チャットのメッセージを既読にします。',
+      inputSchema: readRoomMessagesParamsSchema,
+      annotations: {
+        destructiveHint: false,
+        idempotentHint: true,
+        openWorldHint: true,
+      },
+    },
     readRoomMessage,
   );
-  server.tool(
+  server.registerTool(
     'unread_room_message',
-    'チャットのメッセージを未読にします。',
-    unreadRoomMessageParamsSchema.shape,
+    {
+      description: 'チャットのメッセージを未読にします。',
+      inputSchema: unreadRoomMessageParamsSchema,
+      annotations: {
+        destructiveHint: false,
+        idempotentHint: true,
+        openWorldHint: true,
+      },
+    },
     unreadRoomMessage,
   );
-  server.tool(
+  server.registerTool(
     'get_room_message',
-    'チャットのメッセージを取得します。',
-    getRoomMessageParamsSchema.shape,
+    {
+      description: 'チャットのメッセージを取得します。',
+      inputSchema: getRoomMessageParamsSchema,
+      annotations: { readOnlyHint: true, openWorldHint: true },
+    },
     getRoomMessage,
   );
-  server.tool(
+  server.registerTool(
     'update_room_message',
-    'チャットのメッセージを更新します。',
-    updateRoomMessageParamsSchema.shape,
+    {
+      description: 'チャットのメッセージを更新します。',
+      inputSchema: updateRoomMessageParamsSchema,
+      annotations: {
+        destructiveHint: true,
+        idempotentHint: true,
+        openWorldHint: true,
+      },
+    },
     updateRoomMessage,
   );
-  server.tool(
+  server.registerTool(
     'delete_room_message',
-    'チャットのメッセージを削除します。',
-    deleteRoomMessageParamsSchema.shape,
+    {
+      description: 'チャットのメッセージを削除します。',
+      inputSchema: deleteRoomMessageParamsSchema,
+      annotations: {
+        destructiveHint: true,
+        idempotentHint: true,
+        openWorldHint: true,
+      },
+    },
     deleteRoomMessage,
   );
-  server.tool(
+  server.registerTool(
     'list_room_tasks',
-    'チャットのタスク一覧を最大100件まで取得します。',
-    listRoomTasksParamsSchema.shape,
+    {
+      description: 'チャットのタスク一覧を最大100件まで取得します。',
+      inputSchema: listRoomTasksParamsSchema,
+      annotations: { readOnlyHint: true, openWorldHint: true },
+    },
     listRoomTasks,
   );
-  server.tool(
+  server.registerTool(
     'create_room_task',
-    'チャットに新しいタスクを追加します。',
-    createRoomTaskParamsSchema.shape,
+    {
+      description: 'チャットに新しいタスクを追加します。',
+      inputSchema: createRoomTaskParamsSchema,
+      annotations: {
+        destructiveHint: false,
+        idempotentHint: false,
+        openWorldHint: true,
+      },
+    },
     createRoomTask,
   );
-  server.tool(
+  server.registerTool(
     'get_room_task',
-    'チャットのタスクの情報を取得します。',
-    getRoomTaskParamsSchema.shape,
+    {
+      description: 'チャットのタスクの情報を取得します。',
+      inputSchema: getRoomTaskParamsSchema,
+      annotations: { readOnlyHint: true, openWorldHint: true },
+    },
     getRoomTask,
   );
-  server.tool(
+  server.registerTool(
     'update_room_task_status',
-    'チャットのタスクの完了状態を変更します。',
-    updateRoomTasksStatusParamsSchema.shape,
+    {
+      description: 'チャットのタスクの完了状態を変更します。',
+      inputSchema: updateRoomTasksStatusParamsSchema,
+      annotations: {
+        destructiveHint: false,
+        idempotentHint: true,
+        openWorldHint: true,
+      },
+    },
     updateRoomTaskStatus,
   );
-  server.tool(
+  server.registerTool(
     'list_room_files',
-    'チャットのファイル一覧を最大100件まで取得します。',
-    listRoomFilesParamsSchema.shape,
+    {
+      description: 'チャットのファイル一覧を最大100件まで取得します。',
+      inputSchema: listRoomFilesParamsSchema,
+      annotations: { readOnlyHint: true, openWorldHint: true },
+    },
     listRoomFiles,
   );
-  server.tool(
+  server.registerTool(
     'get_room_file',
-    'チャットのファイルの情報を取得します。',
-    getRoomFileParamsSchema.shape,
+    {
+      description: 'チャットのファイルの情報を取得します。',
+      inputSchema: getRoomFileParamsSchema,
+      annotations: {
+        destructiveHint: false,
+        idempotentHint: false,
+        openWorldHint: true,
+      },
+    },
     getRoomFile,
   );
-  server.tool(
+  server.registerTool(
     'get_room_link',
-    'チャットへの招待リンクを取得します。',
-    getRoomLinkParamsSchema.shape,
+    {
+      description: 'チャットへの招待リンクを取得します。',
+      inputSchema: getRoomLinkParamsSchema,
+      annotations: { readOnlyHint: true, openWorldHint: true },
+    },
     getRoomLink,
   );
-  server.tool(
+  server.registerTool(
     'create_room_link',
-    'チャットへの招待リンクを作成します。すでに招待リンクが作成されている場合は400エラーを返します。',
-    createRoomLinkParamsSchema.shape,
+    {
+      description:
+        'チャットへの招待リンクを作成します。すでに招待リンクが作成されている場合は400エラーを返します。',
+      inputSchema: createRoomLinkParamsSchema,
+      annotations: {
+        destructiveHint: false,
+        idempotentHint: false,
+        openWorldHint: true,
+      },
+    },
     createRoomLink,
   );
-  server.tool(
+  server.registerTool(
     'update_room_link',
-    'チャットへの招待リンクを変更します。招待リンクが無効になっている場合は400エラーを返します。',
-    updateRoomLinkParamsSchema.shape,
+    {
+      description:
+        'チャットへの招待リンクを変更します。招待リンクが無効になっている場合は400エラーを返します。',
+      inputSchema: updateRoomLinkParamsSchema,
+      annotations: {
+        destructiveHint: true,
+        idempotentHint: true,
+        openWorldHint: true,
+      },
+    },
     updateRoomLink,
   );
-  server.tool(
+  server.registerTool(
     'delete_room_link',
-    'チャットへの招待リンクを削除します。招待リンクが無効になっている場合は400エラーを返します。',
-    deleteRoomLinkParamsSchema.shape,
+    {
+      description:
+        'チャットへの招待リンクを削除します。招待リンクが無効になっている場合は400エラーを返します。',
+      inputSchema: deleteRoomLinkParamsSchema,
+      annotations: {
+        destructiveHint: true,
+        idempotentHint: true,
+        openWorldHint: true,
+      },
+    },
     deleteRoomLink,
   );
-  server.tool(
+  server.registerTool(
     'list_incoming_requests',
-    '自分へのコンタクト承認依頼一覧を最大100件まで取得します。',
+    {
+      description: '自分へのコンタクト承認依頼一覧を最大100件まで取得します。',
+      annotations: { readOnlyHint: true, openWorldHint: true },
+    },
     listIncomingRequests,
   );
-  server.tool(
+  server.registerTool(
     'accept_incoming_request',
-    '自分へのコンタクト承認依頼を承認します。',
-    acceptIncomingRequestParamsSchema.shape,
+    {
+      description: '自分へのコンタクト承認依頼を承認します。',
+      inputSchema: acceptIncomingRequestParamsSchema,
+      annotations: {
+        destructiveHint: false,
+        idempotentHint: true,
+        openWorldHint: true,
+      },
+    },
     acceptIncomingRequest,
   );
-  server.tool(
+  server.registerTool(
     'reject_incoming_request',
-    '自分へのコンタクト承認依頼を拒否します。',
-    rejectIncomingRequestParamsSchema.shape,
+    {
+      description: '自分へのコンタクト承認依頼を拒否します。',
+      inputSchema: rejectIncomingRequestParamsSchema,
+      annotations: {
+        destructiveHint: true,
+        idempotentHint: true,
+        openWorldHint: true,
+      },
+    },
     rejectIncomingRequest,
   );
 

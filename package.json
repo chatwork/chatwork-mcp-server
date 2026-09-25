@@ -46,10 +46,15 @@
     "prettier": "^3.5.3",
     "typescript": "^5.8.2",
     "typescript-eslint": "^8.28.0",
-    "vitest": "^4.1.5"
+    "vitest": "^4.1.5",
+    "@modelcontextprotocol/client": "^2.0.0"
+  },
+  "engines": {
+    "node": ">=20"
   },
   "dependencies": {
-    "@modelcontextprotocol/sdk": "^1.30.0",
-    "zod": "^4.6.5"
+    "zod": "^4.6.5",
+    "@modelcontextprotocol/server": "^2.0.0",
+    "@modelcontextprotocol/node": "^2.0.0"
   }
 }

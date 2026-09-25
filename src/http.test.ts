@@ -124,6 +124,18 @@ describe('http.ts', () => {
         expect(chatworkApi).not.toHaveBeenCalled();
       });
 
+      test('照合はホスト名のみで行われ、ポート番号は無視される', async () => {
+        await expect(
+          postWithHost(`${baseUrl}/mcp`, 'localhost:59999'),
+        ).resolves.toBe(200);
+      });
+
+      test('照合は大文字小文字を無視する', async () => {
+        await expect(
+          postWithHost(`${baseUrl}/mcp`, 'LocalHost:59999'),
+        ).resolves.toBe(200);
+      });
+
       test('allowedHosts を渡すとループバック以外の Host も許可される', async () => {
         const server = await startHttpServer({
           port: 0,
