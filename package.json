@@ -34,7 +34,7 @@
   "homepage": "https://github.com/chatwork/chatwork-mcp-server#readme",
   "description": "MCP (Model Context Protocol) server for operating Chatwork from AI",
   "devDependencies": {
-    "@eslint/js": "^9.23.0",
+    "@eslint/js": "^10.0.1",
     "@tsconfig/strictest": "^2.0.5",
     "@types/node": "^22.13.14",
     "@vitest/coverage-v8": "^5.0.1",
