@@ -18,5 +18,14 @@
       ],
       "settings": {}
     }
-  }
+  },
+  "mounts": [
+    "source=node_modules,target=${containerWorkspaceFolder}/node_modules,type=volume"
+  ],
+  "initializeCommand": "docker volume create node_modules",
+  "postCreateCommand": [
+    "bash",
+    "-c",
+    "sudo chown -R vscode:vscode ${containerWorkspaceFolder}/node_modules && npm install"
+  ]
 }
